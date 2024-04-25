@@ -34,11 +34,11 @@ class Project(db.Model):
         onupdate=lambda: datetime.now(UTC),
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    owner_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
 
     # Relationships
-    owner_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
-    tasks: Mapped[List["Task"]] = relationship("Task", back_populates="project")
     owner: Mapped["User"] = relationship("User", back_populates="projects")
+    tasks: Mapped[List["Task"]] = relationship("Task", back_populates="project")
 
     def __repr__(self):
         return f"<Project {self.title}>"

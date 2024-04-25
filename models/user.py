@@ -28,7 +28,6 @@ class User(UserMixin, db.Model):
 
     # Relationships
     projects: Mapped[list["Project"]] = relationship("Project", back_populates="owner")
-    tasks: Mapped[list["Task"]] = relationship("Task", back_populates="project")
 
     def __repr__(self):
         return f"<User {self.email}>"

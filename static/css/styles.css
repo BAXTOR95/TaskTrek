@@ -1,0 +1,41 @@
+body,
+html {
+	height: 100%; /* Needed to make the footer stick to the bottom */
+	margin: 0;
+	padding: 0; /* Reset default padding */
+}
+#main-content {
+	flex: 1 0 auto; /* Ensures that the main content stretches to fill available space */
+	padding: 0; /* Reset default padding */
+}
+#footer {
+	flex-shrink: 0; /* Ensures that the footer does not shrink */
+	height: 48px; /* Explicitly set the height of the footer */
+}
+.sticky-top {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+	z-index: 1020; /* Higher than the hero image but less than the modal overlay */
+	height: 56px; /* Explicitly set the height of the navbar */
+}
+.full-height-hero {
+	height: calc(
+		100vh - 56px - 48px
+	); /* Height of viewport minus navbar and footer */
+	background: url('https://source.unsplash.com/1600x900/?sticky-note') no-repeat
+		center center;
+	background-size: cover;
+	display: flex;
+	align-items: center; /* Center content vertically */
+	justify-content: center; /* Center content horizontally */
+}
+.text-white {
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.content-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}

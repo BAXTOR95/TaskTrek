@@ -58,7 +58,10 @@ class Task(db.Model):
         onupdate=lambda: datetime.now(UTC),
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    project_id: Mapped[int] = mapped_column(Integer, ForeignKey('projects.id'))
 
     # Relationships
-    project_id: Mapped[int] = mapped_column(Integer, ForeignKey('projects.id'))
     project: Mapped["Project"] = relationship("Project", back_populates="tasks")
+
+    def __repr__(self):
+        return f"<Task {self.title}>"
