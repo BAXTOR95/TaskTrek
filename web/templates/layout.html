@@ -51,7 +51,9 @@
 		<!-- Navigation -->
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="{{ url_for('web.landing') }}"><i class="fa-solid fa-check-double"></i> TaskTrek</a>
+				<a class="navbar-brand" href="{{ url_for('web.landing') }}"
+					><i class="fa-solid fa-check-double"></i> TaskTrek</a
+				>
 				<button
 					class="navbar-toggler"
 					type="button"
@@ -65,12 +67,22 @@
 				</button>
 				<div class="collapse navbar-collapse bg-dark" id="navbarNav">
 					<ul class="navbar-nav ms-auto">
+						{% if not current_user.is_authenticated %}
 						<li class="nav-item">
-							<a class="nav-link" href="#login">Login</a>
+							<a class="nav-link" href="{{ url_for('web.login') }}">Login</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#register">Register</a>
+							<a class="nav-link" href="{{ url_for('web.register') }}"
+								>Register</a
+							>
 						</li>
+						{% else %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('web.logout') }}"
+								>Logout</a
+							>
+						</li>
+						{% endif %}
 					</ul>
 				</div>
 			</div>
@@ -82,7 +94,7 @@
 		<!-- Footer -->
 		<footer id="footer" class="py-3 bg-dark text-center">
 			<div class="container">
-				<p class="text-white-50 mb-0">Copyright © 2024 TaskTrek</p>
+				<p class="text-white-50 mb-0">Copyright © {{ YEAR }} TaskTrek</p>
 			</div>
 		</footer>
 

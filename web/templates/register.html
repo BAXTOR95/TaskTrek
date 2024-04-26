@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+<!-- Page Title-->
+{% block title %}Register{% endblock %}
+
+<!-- Main Content -->
+{% block content %}
+
+<!-- Hero Section -->
+<section class="full-height-hero full-form-wrapper">
+	<div class="content-wrapper">
+		<form
+			class="login-form"
+			method="post"
+			action="{{ url_for('web.register') }}"
+		>
+			{{ form.hidden_tag() }}
+
+			<!-- Flash messages -->
+			{% with messages = get_flashed_messages(with_categories=true) %}
+			<!-- Display flash messages -->
+			{% if messages %}
+			<!-- Loop through messages -->
+			{% for category, message in messages %}
+			<div
+				class="alert {{ 'alert-success' if category == 'success' else 'alert-danger' }} alert-dismissible fade show text-center mb-3"
+				role="alert"
+				id="flash-message"
+			>
+				{{ message }}
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="alert"
+					aria-label="Close"
+				></button>
+			</div>
+			<!-- End loop -->
+			{% endfor %}
+			<!-- End if -->
+			{% endif %}
+			<!-- End with -->
+			{% endwith %}
+
+			<div class="login-form-header">
+				<h2>Create Account</h2>
+				<p>Register for your TaskTrek account</p>
+			</div>
+
+			<!-- Name input -->
+			<div class="form-floating form-floating-label">
+				{{ form.name(class="form-control" + (" is-invalid" if form.name.errors
+				else ""), placeholder="Enter your name...") }}
+				<label for="name">Full Name</label>
+				{% if form.name.errors %}
+				<div class="invalid-feedback" style="display: block">
+					{{ form.name.errors[0] }}
+				</div>
+				{% endif %}
+			</div>
+
+			<!-- Email input -->
+			<div class="form-floating form-floating-label">
+				{{ form.email(class="form-control" + (" is-invalid" if form.email.errors
+				else ""), placeholder="name@example.com") }}
+				<label for="email">Email address</label>
+				{% if form.email.errors %}
+				<div class="invalid-feedback" style="display: block">
+					{{ form.email.errors[0] }}
+				</div>
+				{% endif %}
+			</div>
+
+			<!-- Password input -->
+			<div class="form-floating form-floating-label">
+				{{ form.password(class="form-control" + (" is-invalid" if
+				form.name.errors else ""), placeholder="Enter your password...") }}
+				<label for="password">Password</label>
+				{% if form.password.errors %}
+				<div class="invalid-feedback" style="display: block">
+					{{ form.password.errors[0] }}
+				</div>
+				{% endif %}
+			</div>
+
+			<!-- Confirm Password input -->
+			<div class="form-floating form-floating-label">
+				{{ form.password2(class="form-control" + (" is-invalid" if
+				form.name.errors else ""), placeholder="Re-enter your password...") }}
+				<label for="password2">Confirm Password</label>
+				{% if form.password2.errors %}
+				<div class="invalid-feedback" style="display: block">
+					{{ form.password2.errors[0] }}
+				</div>
+				{% endif %}
+			</div>
+
+			<!-- Register button -->
+			<div class="d-grid gap-2">{{ form.submit(class="btn btn-primary") }}</div>
+		</form>
+	</div>
+</section>
+
+{% endblock %}

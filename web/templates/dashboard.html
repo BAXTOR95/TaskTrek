@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{% block head %}
+		<title>{% block title %}{% endblock %} - TaskTrek</title>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+		/>
+		{% block meta %}
+		<meta name="description" content="TaskTrek" />
+		<meta name="author" content="Brian Arriaga" />
+		{% endblock meta %}
+		<!-- Font Awesome icons (free version)-->
+		<script
+			src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+			crossorigin="anonymous"
+		></script>
+		<!-- Google fonts-->
+		<link
+			href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css?family=Google+Sans+Text:500&amp;lang=en"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<!-- Bootstrap CSS -->
+		{{ bootstrap.load_css() }}
+		<!-- Core theme CSS -->
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='css/dashboard.css') }}"
+		/>
+		{% endblock %}
+	</head>
+	<body>
+		<!-- Sidebar -->
+		<div
+			class="dashboard-sidebar bg-dark d-flex flex-column flex-shrink-0 p-3 text-white"
+			id="sidebar"
+		>
+			<a
+				href="/"
+				class="sidebar-heading text-white text-decoration-none"
+				id="sidebarCollapse"
+				>TaskTrek</a
+			>
+			<hr />
+			<div class="user-profile d-flex align-items-center">
+				<img src="https://via.placeholder.com/50" alt="Profile Picture" />
+				<div class="ms-2">
+					<div>{{ current_user.name }}</div>
+					<div><small>PRO</small></div>
+				</div>
+			</div>
+			<hr />
+			<ul class="nav nav-pills flex-column mb-auto">
+				<li class="nav-item">
+					<a href="{{ url_for('web.projects') }}" class="nav-link active" aria-current="page">
+						<i class="bi bi-grid-fill"></i>
+						<span class="link-text">Projects</span>
+					</a>
+				</li>
+				<!-- Additional nav items here -->
+			</ul>
+			<div class="mt-auto">
+				<a href="{{ url_for('web.logout') }}" class="nav-link text-white">
+					<i class="bi bi-box-arrow-left"></i>
+					<span class="link-text">Log out</span>
+				</a>
+			</div>
+		</div>
+
+		<!-- Content -->
+		{% block content %}{% endblock %}
+
+		<!-- Bootstrap core JS-->
+		{{ bootstrap.load_js() }}
+		<!-- Core theme JS-->
+		<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+	</body>
+</html>
