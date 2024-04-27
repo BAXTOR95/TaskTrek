@@ -6,15 +6,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from flask_login import login_user, login_required, logout_user, current_user
 from datetime import datetime, UTC
+from web.utils.gravatar import gravatar_url
 
 web_blueprint = Blueprint('web', __name__, template_folder='templates')
 
 
 @web_blueprint.app_context_processor
-def inject_current_year():
+def inject_content():
     """Injects the current year into all templates."""
     year = datetime.now().year
-    return dict(YEAR=year)
+    return dict(year=year, gravatar_url=gravatar_url)
 
 
 @web_blueprint.route("/")

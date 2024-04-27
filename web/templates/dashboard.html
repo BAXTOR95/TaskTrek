@@ -19,6 +19,10 @@
 		></script>
 		<!-- Google fonts-->
 		<link
+			href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900"
+			rel="stylesheet"
+		/>
+		<link
 			href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"
 			rel="stylesheet"
 			type="text/css"
@@ -42,45 +46,62 @@
 		{% endblock %}
 	</head>
 	<body>
-		<!-- Sidebar -->
-		<div
-			class="dashboard-sidebar bg-dark d-flex flex-column flex-shrink-0 p-3 text-white"
-			id="sidebar"
-		>
-			<a
-				href="/"
-				class="sidebar-heading text-white text-decoration-none"
-				id="sidebarCollapse"
-				>TaskTrek</a
-			>
-			<hr />
-			<div class="user-profile d-flex align-items-center">
-				<img src="https://via.placeholder.com/50" alt="Profile Picture" />
-				<div class="ms-2">
-					<div>{{ current_user.name }}</div>
-					<div><small>PRO</small></div>
+		<div class="wrapper d-flex align-items-stretch">
+			<nav id="sidebar">
+				<div class="custom-menu">
+					<button type="button" id="sidebarCollapse" class="btn btn-primary">
+						<i class="fa fa-bars"></i>
+						<span class="sr-only">Toggle Menu</span>
+					</button>
 				</div>
-			</div>
-			<hr />
-			<ul class="nav nav-pills flex-column mb-auto">
-				<li class="nav-item">
-					<a href="{{ url_for('web.projects') }}" class="nav-link active" aria-current="page">
-						<i class="bi bi-grid-fill"></i>
-						<span class="link-text">Projects</span>
-					</a>
-				</li>
-				<!-- Additional nav items here -->
-			</ul>
-			<div class="mt-auto">
-				<a href="{{ url_for('web.logout') }}" class="nav-link text-white">
-					<i class="bi bi-box-arrow-left"></i>
-					<span class="link-text">Log out</span>
-				</a>
+				<div class="p-4 pt-5">
+					<h1>
+						<a href="{{ url_for('web.projects') }}" class="logo">TaskTrek</a>
+					</h1>
+					<hr />
+					<div class="user-profile d-flex align-items-center mb-auto">
+						<img
+							src="{{ gravatar_url(current_user.email) }}"
+							alt="Profile Picture"
+						/>
+						<div class="ms-2">
+							<div>{{ current_user.name }}</div>
+							<div>
+								<small><i class="fa-regular fa-user"></i> PRO</small>
+							</div>
+						</div>
+					</div>
+					<hr />
+					<ul class="list-unstyled components mb-auto">
+						<li class="active">
+							<a href="{{ url_for('web.projects') }}"
+								><i class="fa-solid fa-boxes-stacked"></i> Projects</a
+							>
+						</li>
+					</ul>
+					<hr />
+					<div class="components footer mt-auto">
+						<ul class="list-unstyled">
+							<li>
+								<a href="{{ url_for('web.landing') }}"
+									><i class="fa-solid fa-gear"></i> Settings</a
+								>
+							</li>
+							<li>
+								<a href="{{ url_for('web.logout') }}"
+									><i class="fa-solid fa-right-from-bracket"></i> Logout</a
+								>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+
+			<!-- Page Content  -->
+			<div id="content" class="p-4 p-md-5 pt-5">
+				{% block content %}{% endblock %}
 			</div>
 		</div>
-
-		<!-- Content -->
-		{% block content %}{% endblock %}
 
 		<!-- Bootstrap core JS-->
 		{{ bootstrap.load_js() }}

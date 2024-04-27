@@ -5,25 +5,21 @@
 <!-- Main Content -->
 {% block content %}
 
-<div class="dashboard-content" id="content">
-    <button class="sidebar-toggler btn btn-light mb-3" id="sidebarToggle">
-        &#9776;
-    </button>
-    <h2 class="mb-4">Projects</h2>
-    <div class="d-flex justify-content-end mb-2">
-        <button class="btn btn-primary">+ Add New Project</button>
-    </div>
-    <div class="project-grid">
-        <!-- Project cards -->
-        <!-- Dynamically generate project cards here -->
-        {% for project in projects %}
-        <div class="project-card">
-            <button class="delete-btn"><i class="bi bi-x-lg"></i></button>
-            <h5>{{ project.name }}</h5>
-            <!-- Project details -->
-        </div>
-        {% endfor %}
-    </div>
+<!-- Main Content -->
+<h2 class="mb-4">Projects</h2>
+<div class="d-flex justify-content-end mb-2">
+	<button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add New Project</button>
+</div>
+<div class="project-grid">
+	<!-- Project cards -->
+    {% for project in projects %}
+	<div class="project-card">
+		<button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+		<h5>{project.title}</h5>
+		<p>{project.description}</p>
+	</div>
+    {% endfor %}
+	<!-- Repeat for more projects -->
 </div>
 
 {% endblock %}
