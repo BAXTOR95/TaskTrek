@@ -15,3 +15,9 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Confirm Password', validators=[DataRequired()])
     submit = SubmitField('Register')
+
+
+class ProjectForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = StringField('Description')
+    submit = SubmitField('Create Project')

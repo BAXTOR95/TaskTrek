@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models import Task, Project, User
 from models.database import db
-from web.forms import LoginForm, RegisterForm
+from web.forms import LoginForm, RegisterForm, ProjectForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from flask_login import login_user, login_required, logout_user, current_user
@@ -111,6 +111,72 @@ def logout():
 @login_required
 def projects():
     """Displays the user's projects on the dashboard."""
+    form = ProjectForm()
     user_projects = Project.query.filter_by(owner_id=current_user.id).all()
     projects = [project for project in user_projects]
-    return render_template("projects.html", projects=projects)
+    return render_template("projects.html", projects=projects, form=form)
+
+
+@web_blueprint.route("/dashboard/projects/add", methods=["POST"])
+@login_required
+def add_project():
+    """Adds a new project to the database.
+
+    Returns:
+        Response: Redirect to the projects page.
+    """
+    try:
+        title = request.form.get("title")
+        description = request.form.get("description")
+        new_project = Project(
+            title=title, description=description, owner_id=current_user.id
+        )
+        db.session.add(new_project)
+        db.session.commit()
+        flash("Project added successfully.", category="success")
+        return redirect(url_for("web.projects"))
+    except Exception as e:
+        db.session.rollback()
+        flash("An error occurred while adding the project.", category="danger")
+        return redirect(url_for("web.projects"))
+
+
+@web_blueprint.route("/dashboard/projects/delete/<int:project_id>", methods=["POST"])
+@login_required
+def delete_project(project_id):
+    """Deletes a project from the database.
+
+    Args:
+        project_id (int): The ID of the project to delete.
+
+    Returns:
+        Response: Redirect to the projects page.
+    """
+    try:
+        project = Project.query.get(project_id)
+        db.session.delete(project)
+        db.session.commit()
+        flash("Project deleted successfully.", category="success")
+        return redirect(url_for("web.projects"))
+    except Exception as e:
+        db.session.rollback()
+        flash("An error occurred while deleting the project.", category="danger")
+        return redirect(url_for("web.projects"))
+
+
+# create project_detail route to display tasks for a project
+@web_blueprint.route("/dashboard/projects/<int:project_id>")
+@login_required
+def project_detail(project_id):
+    """Displays the tasks for a specific project.
+
+    Args:
+        project_id (int): The ID of the project to display.
+
+    Returns:
+        Response: The project detail template.
+    """
+    project = Project.query.get(project_id)
+    project_tasks = Task.query.filter_by(project_id=project_id).all()
+    tasks = [task for task in project_tasks]
+    return render_template("project_detail.html", project=project, tasks=tasks)
