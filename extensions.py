@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from models.database import db
 from dotenv import load_dotenv
 from pathlib import Path
+from flask_wtf.csrf import CSRFProtect
 
 # Initialize environment variables
 ENV_PATH = Path(".env")
@@ -26,3 +27,5 @@ def init_app(app):
     login_manager.login_view = 'web.login'
 
     bootstrap.init_app(app)
+
+    CSRFProtect(app)

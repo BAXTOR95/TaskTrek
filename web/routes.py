@@ -1,12 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from models import Task, Project, User
 from models.database import db
-from web.forms import LoginForm, RegisterForm, ProjectForm
+from web.forms import LoginForm, RegisterForm, ProjectForm, TaskForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from flask_login import login_user, login_required, logout_user, current_user
 from datetime import datetime, UTC
 from web.utils.gravatar import gravatar_url
+
 
 web_blueprint = Blueprint('web', __name__, template_folder='templates')
 
@@ -164,7 +165,6 @@ def delete_project(project_id):
         return redirect(url_for("web.projects"))
 
 
-# create project_detail route to display tasks for a project
 @web_blueprint.route("/dashboard/projects/<int:project_id>")
 @login_required
 def project_detail(project_id):
@@ -176,7 +176,69 @@ def project_detail(project_id):
     Returns:
         Response: The project detail template.
     """
+    form = TaskForm()
     project = Project.query.get(project_id)
     project_tasks = Task.query.filter_by(project_id=project_id).all()
     tasks = [task for task in project_tasks]
-    return render_template("project_detail.html", project=project, tasks=tasks)
+    return render_template(
+        "project_detail.html", project=project, tasks=tasks, form=form
+    )
+
+
+@web_blueprint.route("/dashboard/projects/<int:project_id>/add_task", methods=["POST"])
+@login_required
+def add_task(project_id):
+    """Adds a new task to the database for a specific project.
+
+    Args:
+        project_id (int): The ID of the project to add the task to.
+
+    Returns:
+        Response: Redirect to the project detail page.
+    """
+    try:
+        title = request.form.get("title")
+        description = request.form.get("description")
+        status = request.form.get("status")
+        priority = request.form.get("priority")
+        new_task = Task(
+            title=title,
+            description=description,
+            status=status,
+            priority=priority,
+            project_id=project_id,
+        )
+        db.session.add(new_task)
+        db.session.commit()
+        flash("Task added successfully.", category="success")
+        return redirect(url_for("web.project_detail", project_id=project_id))
+    except Exception as e:
+        db.session.rollback()
+        flash(f"An error occurred while adding the task: {str(e)}", category="danger")
+        return redirect(url_for("web.project_detail", project_id=project_id))
+
+
+@web_blueprint.route(
+    "/dashboard/projects/<int:project_id>/delete_task/<int:task_id>", methods=["POST"]
+)
+@login_required
+def delete_task(project_id, task_id):
+    """Deletes a task from the database.
+
+    Args:
+        project_id (int): The ID of the project the task belongs to.
+        task_id (int): The ID of the task to delete.
+
+    Returns:
+        Response: Redirect to the project detail page.
+    """
+    try:
+        task = Task.query.get(task_id)
+        db.session.delete(task)
+        db.session.commit()
+        flash("Task deleted successfully.", category="success")
+        return redirect(url_for("web.project_detail", project_id=project_id))
+    except Exception as e:
+        db.session.rollback()
+        flash("An error occurred while deleting the task.", category="danger")
+        return redirect(url_for("web.project_detail", project_id=project_id))

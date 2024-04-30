@@ -22,13 +22,21 @@
 	});
 })();
 
-document.addEventListener('DOMContentLoaded', function () {
-	var submitButton = document.getElementById('submitForm');
-	submitButton.addEventListener('click', function () {
-		var form = document.getElementById('projectForm');
-		form.submit(); // Trigger form submission
+if (document.getElementById('submitForm')) {
+	document.addEventListener('DOMContentLoaded', function () {
+		var submitButton = document.getElementById('submitForm');
+		submitButton.addEventListener('click', function () {
+			if (document.getElementById('projectForm')) {
+				var form = document.getElementById('projectForm');
+				form.submit(); // Trigger form submission
+			}
+			if (document.getElementById('taskForm')) {
+				var form = document.getElementById('taskForm');
+				form.submit(); // Trigger form submission
+			}
+		});
 	});
-});
+}
 
 if (document.getElementById('flash-message')) {
 	window.setTimeout(function () {
@@ -41,5 +49,5 @@ if (document.getElementById('flash-message')) {
 }
 
 function redirectToProject(url) {
-    window.location.href = url; // Redirect to the provided URL
+	window.location.href = url; // Redirect to the provided URL
 }

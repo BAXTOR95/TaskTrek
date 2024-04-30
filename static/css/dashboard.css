@@ -259,6 +259,36 @@ a[data-toggle='collapse'] {
 	/* Firefox 18- */
 	color: rgba(0, 0, 0, 0.3);
 }
+.form-select {
+	height: 40px !important;
+	background: #fff;
+	color: #000;
+	font-size: 13px;
+	border-radius: 4px;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	border: transparent;
+}
+.form-select:focus,
+.form-select:active {
+	border-color: #000;
+}
+.form-select::-webkit-input-placeholder {
+	/* Chrome/Opera/Safari */
+	color: rgba(0, 0, 0, 0.3);
+}
+.form-select::-moz-placeholder {
+	/* Firefox 19+ */
+	color: rgba(0, 0, 0, 0.3);
+}
+.form-select:-ms-input-placeholder {
+	/* IE 0+ */
+	color: rgba(0, 0, 0, 0.3);
+}
+.form-select:-moz-placeholder {
+	/* Firefox 18- */
+	color: rgba(0, 0, 0, 0.3);
+}
 .user-profile {
 	padding: 1rem;
 	display: flex;
