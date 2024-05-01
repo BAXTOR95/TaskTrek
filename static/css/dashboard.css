@@ -1,3 +1,8 @@
+html,
+body {
+	height: 100%;
+	margin: 0;
+}
 body {
 	font-family: 'Poppins', Arial, sans-serif;
 	font-size: 14px;
@@ -11,7 +16,6 @@ hr {
 	-webkit-box-sizing: content-box;
 	box-sizing: content-box;
 	height: 0;
-	overflow: visible;
 	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 a {
@@ -93,18 +97,23 @@ h5,
 }
 .wrapper {
 	width: 100%;
+	display: flex;
+	flex-direction: row;
+	height: 100vh; /* Full viewport height */
+	overflow: hidden; /* Prevent extra scrolling */
 }
 #sidebar {
 	min-width: 250px;
 	max-width: 250px;
-	height: 100vh;
 	background: #161336;
 	color: #fff;
+	height: 100vh; /* Match the viewport height */
 	-webkit-transition: all 0.3s;
 	-o-transition: all 0.3s;
 	transition: all 0.3s;
 	position: relative;
 	text-align: center;
+	z-index: 2; /* Keep sidebar above the content when sliding in/out */
 }
 #sidebar .h6 {
 	color: #fff;
@@ -210,9 +219,14 @@ a[data-toggle='collapse'] {
 	}
 }
 #content {
-	width: 100%;
-	padding: 0;
-	min-height: 100vh;
+	flex-grow: 1; /* Fill the remaining space */
+	overflow-y: auto; /* Scrollable content area */
+	padding: 20px; /* Padding for content */
+	background: #fafafa; /* Different background to distinguish from sidebar */
+	position: relative; /* Ensure content is positioned correctly */
+	left: 0; /* Align to the left edge of its flex container */
+	top: 0; /* Align to the top of its container */
+	height: 100vh; /* Minimum height to fill the viewport */
 	-webkit-transition: all 0.3s;
 	-o-transition: all 0.3s;
 	transition: all 0.3s;
@@ -347,4 +361,53 @@ a[data-toggle='collapse'] {
 	left: 0;
 	transition: all 0.3s ease;
 	padding-left: 2px;
+}
+.task-column {
+	background-color: #6e70002c;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.task-column h4 {
+	color: #161336cc;
+	text-align: center;
+}
+@media (max-width: 768px) {
+	.task-column {
+		flex: 0 0 100%;
+	}
+}
+.card {
+	height: auto; /* Auto height based on content */
+	padding: 5px; /* Padding inside the card */
+	background-color: #6e700033; /* Typical sticky note yellow */
+	box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+	border-radius: 8px; /* Slightly rounded corners for a softer look */
+	font-family: 'Comic Sans MS', 'Comic Sans', cursive; /* Casual font style */
+	color: #333; /* Dark text for better readability */
+	margin: 20px; /* Margin around the card */
+	transform: rotate(3deg); /* Tilt the card for a casual placement effect */
+	transition: transform 0.3s; /* Smooth transition for hover effect */
+	cursor: grab; /* Change cursor to indicate the card is draggable */
+}
+
+.card:hover {
+	transform: rotate(0deg); /* Straighten the card on hover */
+	box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
+.priority-low {
+    background-color: #daf7a6; /* Light Green */
+    color: #345920; /* Dark Green Text */
+}
+.priority-medium {
+    background-color: #ffdd59; /* Yellow */
+    color: #7a5c01; /* Dark Yellow Text */
+}
+.priority-high {
+    background-color: #ff884b; /* Orange */
+    color: #803400; /* Dark Orange Text */
+}
+.priority-urgent {
+    background-color: #ff5e57; /* Red */
+    color: #7f0c00; /* Dark Red Text */
 }

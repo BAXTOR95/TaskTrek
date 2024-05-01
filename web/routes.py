@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from flask_login import login_user, login_required, logout_user, current_user
 from datetime import datetime, UTC
 from web.utils.gravatar import gravatar_url
+from models.task import TaskStatus
 
 
 web_blueprint = Blueprint('web', __name__, template_folder='templates')
@@ -179,9 +180,8 @@ def project_detail(project_id):
     form = TaskForm()
     project = Project.query.get(project_id)
     project_tasks = Task.query.filter_by(project_id=project_id).all()
-    tasks = [task for task in project_tasks]
     return render_template(
-        "project_detail.html", project=project, tasks=tasks, form=form
+        "project_detail.html", project=project, tasks=project_tasks, form=form
     )
 
 
@@ -242,3 +242,36 @@ def delete_task(project_id, task_id):
         db.session.rollback()
         flash("An error occurred while deleting the task.", category="danger")
         return redirect(url_for("web.project_detail", project_id=project_id))
+
+
+@web_blueprint.route(
+    "/dashboard/projects/<int:project_id>/update_task/<int:task_id>", methods=["POST"]
+)
+@login_required
+def update_task(project_id, task_id):
+    """Updates the status of a task in the database based on JSON input.
+
+    Args:
+        project_id (int): The ID of the project the task belongs to.
+        task_id (int): The ID of the task to update.
+
+    Returns:
+        json: Response indicating success or failure of the update.
+    """
+    try:
+        data = request.get_json()  # Get data from JSON request
+        task = Task.query.get(task_id)
+        if not task:
+            return jsonify({'success': False, 'message': 'Task not found'}), 404
+
+        new_status = data.get('status')
+        if new_status in TaskStatus.__members__:  # Check if the provided status is a valid enum member
+            task.status = TaskStatus[new_status]  # Convert string to Enum
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Task updated successfully'}), 200
+        else:
+            return jsonify({'success': False, 'message': 'Invalid status value'}), 400
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}), 500
