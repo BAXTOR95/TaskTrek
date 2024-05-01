@@ -1,3 +1,6 @@
+<!-- Import macros -->
+{% from "macros.html" import render_task_column, render_task_modal %}
+<!-- Extends layout -->
 {% extends "dashboard.html" %}
 <!-- Page Title-->
 {% block title %}{{ project.title|title }}'s Tasks{% endblock %}
@@ -33,227 +36,37 @@
 <!-- End with -->
 {% endwith %}
 
+<!-- Add Task Modal Container -->
 <div class="task-container mb-4">
 	<!-- Task Adding Form -->
-	<div class="d-flex justify-content-between align-items-center">
+	<div class="d-flex justify-content-end">
 		<button
 			type="button"
 			class="btn btn-primary"
 			data-bs-toggle="modal"
 			data-bs-target="#addTaskModal"
+			data-bs-add-url="{{ url_for('web.add_task', project_id=project.id) }}"
 		>
 			<i class="fa-solid fa-plus"></i> Add New Task
 		</button>
 	</div>
-	<div
-		class="modal fade"
-		id="addTaskModal"
-		tabindex="-1"
-		aria-labelledby="addTaskModalLabel"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="addTaskModalLabel">New Task</h5>
-					<button
-						type="button"
-						class="btn-close"
-						data-bs-dismiss="modal"
-						aria-label="Close"
-					></button>
-				</div>
-				<div class="modal-body">
-					<form
-						id="taskForm"
-						method="post"
-						action="{{ url_for('web.add_task', project_id=project.id) }}"
-					>
-						{{ form.hidden_tag() }}
-						<div class="form-floating form-floating-label mb-3">
-							{{ form.title(class="form-control", placeholder="Task Title",
-							id="taskTitle") }}
-							<label for="title" class="col-form-label">Task's Title</label>
-							{% if form.title.errors %}
-							<div class="invalid-feedback" style="display: block">
-								{{ form.title.errors[0] }}
-							</div>
-							{% endif %}
-						</div>
-						<div class="form-floating form-floating-label mb-3">
-							{{ form.description( class="form-control",
-							placeholder="Task's_Description", id="taskDescription") }}
-							<label for="description" class="col-form-label"
-								>Tasks's Description</label
-							>
-							{% if form.description.errors %}
-							<div class="invalid-feedback" style="display: block">
-								{{ form.description.errors[0] }}
-							</div>
-							{% endif %}
-						</div>
-						<div class="form-floating form-floating-label mb-3">
-							{{ form.status(class="form-select", id="taskStatus") }}
-							<label for="status" class="col-form-label">Tasks's Status</label>
-						</div>
-						<div class="form-floating form-floating-label mb-3">
-							{{ form.priority(class="form-select", id="taskPriority") }}
-							<label for="priority" class="col-form-label"
-								>Tasks's Priority</label
-							>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button
-						type="button"
-						class="btn btn-secondary"
-						data-bs-dismiss="modal"
-					>
-						Close
-					</button>
-					{{ form.submit(class="btn btn-primary", id="submitForm") }}
-				</div>
-			</div>
-		</div>
-	</div>
+	<!-- Add Task Modal -->
+	{{ render_task_modal(project, form, 'addTaskModal', 'Add New Task', 'Add Task') }}
+	<!-- Edit Task Modal -->
+	{{ render_task_modal(project, form, 'editTaskModal', 'Edit Task', 'Save Changes') }}
 </div>
 
 <div id="tasks" class="container-fluid">
 	<div class="row">
 		<!-- Task columns for different statuses -->
-		<div class="col-md-3 task-column" data-status="TODO">
-			<h4>To-Do</h4>
-			<div id="todo" class="task-list">
-				{% for task in tasks if task.status.name == 'TODO' %}
-				<div
-					class="card mb-3 priority-{{task.priority.name|lower}}"
-					draggable="true"
-					id="task-{{ task.id }}"
-					data-url="{{ url_for('web.update_task', project_id=project.id, task_id=task.id) }}"
-				>
-					<div class="card-body">
-						<h5 class="card-title">{{ task.title }}</h5>
-						<p class="card-text">{{ task.description }}</p>
-						<div class="d-flex justify-content-between align-items-center">
-							<div>
-								<!-- Edit Task Button -->
-								<button
-									type="button"
-									class="btn btn-sm btn-outline-primary me-2"
-								>
-									<i class="fa-solid fa-pen-to-square"></i>
-								</button>
-								<!-- Delete Task Button -->
-								<button type="button" class="btn btn-sm btn-outline-danger">
-									<i class="fa-solid fa-trash"></i>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				{% endfor %}
-			</div>
-		</div>
-		<div class="col-md-3 task-column" data-status="IN_PROGRESS">
-			<h4>In Progress</h4>
-			<div id="inProgress" class="task-list">
-				{% for task in tasks if task.status.name == 'IN_PROGRESS' %}
-				<div
-					class="card mb-3 priority-{{task.priority.name|lower}}"
-					draggable="true"
-					id="task-{{ task.id }}"
-					data-url="{{ url_for('web.update_task', project_id=project.id, task_id=task.id) }}"
-				>
-					<div class="card-body">
-						<h5 class="card-title">{{ task.title }}</h5>
-						<p class="card-text">{{ task.description }}</p>
-						<div class="d-flex justify-content-between align-items-center">
-							<div>
-								<!-- Edit Task Button -->
-								<button
-									type="button"
-									class="btn btn-sm btn-outline-primary me-2"
-								>
-									<i class="fa-solid fa-pen-to-square"></i>
-								</button>
-								<!-- Delete Task Button -->
-								<button type="button" class="btn btn-sm btn-outline-danger">
-									<i class="fa-solid fa-trash"></i>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				{% endfor %}
-			</div>
-		</div>
-		<div class="col-md-3 task-column" data-status="DONE">
-			<h4>Done</h4>
-			<div id="done" class="task-list">
-				{% for task in tasks if task.status.name == 'DONE' %}
-				<div
-					class="card mb-3 priority-{{task.priority.name|lower}}"
-					draggable="true"
-					id="task-{{ task.id }}"
-					data-url="{{ url_for('web.update_task', project_id=project.id, task_id=task.id) }}"
-				>
-					<div class="card-body">
-						<h5 class="card-title">{{ task.title }}</h5>
-						<p class="card-text">{{ task.description }}</p>
-						<div class="d-flex justify-content-between align-items-center">
-							<div>
-								<!-- Edit Task Button -->
-								<button
-									type="button"
-									class="btn btn-sm btn-outline-primary me-2"
-								>
-									<i class="fa-solid fa-pen-to-square"></i>
-								</button>
-								<!-- Delete Task Button -->
-								<button type="button" class="btn btn-sm btn-outline-danger">
-									<i class="fa-solid fa-trash"></i>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				{% endfor %}
-			</div>
-		</div>
-		<div class="col-md-3 task-column" data-status="ARCHIVED">
-			<h4>Archived</h4>
-			<div id="archived" class="task-list">
-				{% for task in tasks if task.status.name == 'ARCHIVED' %}
-				<div
-					class="card mb-3 priority-{{task.priority.name|lower}}"
-					draggable="true"
-					id="task-{{ task.id }}"
-					data-url="{{ url_for('web.update_task', project_id=project.id, task_id=task.id) }}"
-				>
-					<div class="card-body">
-						<h5 class="card-title">{{ task.title }}</h5>
-						<p class="card-text">{{ task.description }}</p>
-						<div class="d-flex justify-content-between align-items-center">
-							<div>
-								<!-- Edit Task Button -->
-								<button
-									type="button"
-									class="btn btn-sm btn-outline-primary me-2"
-								>
-									<i class="fa-solid fa-pen-to-square"></i>
-								</button>
-								<!-- Delete Task Button -->
-								<button type="button" class="btn btn-sm btn-outline-danger">
-									<i class="fa-solid fa-trash"></i>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				{% endfor %}
-			</div>
-		</div>
+		<!-- TODO -->
+		{{ render_task_column(tasks, 'TODO', project, form) }}
+		<!-- IN_PROGRESS -->
+		{{ render_task_column(tasks, 'IN_PROGRESS', project, form) }}
+		<!-- DONE -->
+		{{ render_task_column(tasks, 'DONE', project, form) }}
+		<!-- ARCHIVED -->
+		{{ render_task_column(tasks, 'ARCHIVED', project, form) }}
 	</div>
 </div>
 

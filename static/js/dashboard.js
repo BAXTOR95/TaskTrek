@@ -22,82 +22,138 @@
 	});
 })();
 
-if (document.getElementById('submitForm')) {
-	document.addEventListener('DOMContentLoaded', function () {
-		var submitButton = document.getElementById('submitForm');
-		submitButton.addEventListener('click', function () {
-			if (document.getElementById('projectForm')) {
-				var form = document.getElementById('projectForm');
-				form.submit(); // Trigger form submission
-			}
-			if (document.getElementById('taskForm')) {
-				var form = document.getElementById('taskForm');
-				form.submit(); // Trigger form submission
-			}
-		});
-	});
-}
-
 if (document.getElementById('flash-message')) {
 	window.setTimeout(function () {
-		$('.alert')
-			.fadeTo(500, 0)
-			.slideUp(500, function () {
-				$(this).remove();
-			});
+		let alerts = document.querySelectorAll('.alert');
+		alerts.forEach((alert) => {
+			fadeOutAndSlideUp(alert, 500);
+		});
 	}, 5000);
+}
+
+function fadeOutAndSlideUp(element, duration) {
+	element.style.transition = `opacity ${duration}ms, height ${duration}ms, margin ${duration}ms, padding ${duration}ms`;
+	element.style.height = `${element.offsetHeight}px`; // Set initial height to prevent collapse during transition
+	element.style.opacity = '0';
+
+	setTimeout(() => {
+		element.style.height = '0';
+		element.style.marginTop = '0';
+		element.style.marginBottom = '0';
+		element.style.paddingTop = '0';
+		element.style.paddingBottom = '0';
+
+		setTimeout(() => {
+			element.remove();
+		}, duration);
+	}, duration);
 }
 
 function redirectToProject(url) {
 	window.location.href = url; // Redirect to the provided URL
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const columns = document.querySelectorAll('.task-column');
+document.addEventListener('DOMContentLoaded', function () {
+	// Listen for click events on the document
+	document.addEventListener('click', function (event) {
+		// Check if the clicked element is a submit button
+		if (event.target && event.target.classList.contains('submit-form')) {
+			// Traverse up the DOM tree from the target to find its parent modal
+			var parentModal = event.target.closest('.modal');
 
-    columns.forEach(column => {
-        column.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        });
+			// If a parent modal is found and it contains a form, submit that form
+			if (parentModal) {
+				var form = parentModal.querySelector('form');
+				if (form) {
+					form.submit();
+				}
+			}
+		}
+	});
 
-        column.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const taskId = e.dataTransfer.getData('text/plain');
-            const task = document.getElementById(taskId);
+	// Add event listeners for drag-and-drop functionality
+	const columns = document.querySelectorAll('.task-column');
+
+	columns.forEach((column) => {
+		column.addEventListener('dragover', (e) => {
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'move';
+		});
+
+		column.addEventListener('drop', (e) => {
+			e.preventDefault();
+			const taskId = e.dataTransfer.getData('text/plain');
+			const task = document.getElementById(taskId);
 			const url = task.getAttribute('data-url');
 			const newStatus = column.getAttribute('data-status');
-            column.appendChild(task);
-            updateTaskStatus(url, newStatus);
-        });
-    });
+			column.appendChild(task);
+			updateTaskStatus(url, newStatus);
+		});
+	});
 
-    document.querySelectorAll('.card').forEach(task => {
-        task.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', task.id);
-        });
-    });
+	document.querySelectorAll('.card').forEach((task) => {
+		task.addEventListener('dragstart', (e) => {
+			e.dataTransfer.setData('text/plain', task.id);
+		});
+	});
+
+	// Add event listeners for task edit buttons
+	const editTaskModal = document.getElementById('editTaskModal');
+	if (editTaskModal) {
+		editTaskModal.addEventListener('show.bs.modal', function (event) {
+			const button = event.relatedTarget; // Button that triggered the modal
+			const url = button.getAttribute('data-bs-update-url');
+			const taskTitle = button.getAttribute('data-bs-task-title');
+			const taskDescription = button.getAttribute('data-bs-task-description');
+			const taskStatus = button.getAttribute('data-bs-task-status');
+			const taskPriority = button.getAttribute('data-bs-task-priority');
+
+			const modalTitle = editTaskModal.querySelector('.modal-title');
+			const form = editTaskModal.querySelector('form');
+
+			modalTitle.textContent = 'Edit Task: ' + taskTitle; // Update modal title
+			form.action = url; // Update form action
+
+			// Populate form fields
+			form.querySelector('#taskTitle').value = taskTitle;
+			form.querySelector('#taskDescription').value = taskDescription;
+			form.querySelector('#taskStatus').value = taskStatus;
+			form.querySelector('#taskPriority').value = taskPriority;
+		});
+	}
+
+	// Set form action for addTaskModal
+	const addTaskModal = document.getElementById('addTaskModal');
+	if (addTaskModal) {
+		addTaskModal.addEventListener('show.bs.modal', function (event) {
+			const button = event.relatedTarget; // Button that triggered the modal
+			const url = button.getAttribute('data-bs-add-url');
+
+			const form = addTaskModal.querySelector('form');
+			form.action = url; // Update form action
+		});
+	}
 });
 
 // Function to send a request to update the task's status
 function updateTaskStatus(url, newStatus) {
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
-        },
-        body: JSON.stringify({ status: newStatus })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            console.error('Failed to update task status:', data.message);
-            alert('Failed to update task status.');
-        }
-    })
-    .catch(error => {
-        console.error('Error updating task status:', error);
-        alert('Error updating task status.');
-    });
+	fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value,
+		},
+		body: JSON.stringify({ status: newStatus }),
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			if (!data.success) {
+				console.error('Failed to update task status:', data.message);
+				alert('Failed to update task status.');
+			}
+		})
+		.catch((error) => {
+			console.error('Error updating task status:', error);
+			alert('Error updating task status.');
+		});
 }

@@ -1,0 +1,121 @@
+<!-- Macro for rendering task column -->
+{% macro render_task_column(tasks, status, project, form) %}
+<div class="col-md-3 task-column" data-status="{{ status }}">
+	<h4>{{ status.replace('_', ' ') | title }}</h4>
+	<div id="{{ status | lower }}" class="task-list">
+		{% for task in tasks if task.status.name == status %}
+		<div
+			class="card mb-3 priority-{{ task.priority.name | lower }}"
+			draggable="true"
+			id="task-{{ task.id }}"
+			data-url="{{ url_for('web.update_task_status', project_id=project.id, task_id=task.id) }}"
+		>
+			<div class="card-body">
+				<h5 class="card-title">{{ task.title }}</h5>
+				<p class="card-text">{{ task.description }}</p>
+				<div class="d-flex justify-content-between align-items-center">
+					<!-- Edit Task Button -->
+					<button
+						type="button"
+						class="btn btn-sm btn-outline-primary me-2"
+						data-bs-toggle="modal"
+						data-bs-target="#editTaskModal"
+						data-bs-update-url="{{ url_for('web.update_task', project_id=project.id, task_id=task.id) }}"
+						data-bs-task-title="{{ task.title }}"
+						data-bs-task-description="{{ task.description }}"
+						data-bs-task-status="{{ task.status.name }}"
+						data-bs-task-priority="{{ task.priority.name }}"
+					>
+						<i class="fa-solid fa-pen-to-square"></i>
+					</button>
+					<form
+						action="{{ url_for('web.delete_task', project_id=project.id, task_id=task.id) }}"
+						method="POST"
+					>
+						{{ form.csrf_token }}
+						<button
+							type="submit"
+							class="btn btn-sm btn-outline-danger"
+							onclick="return confirm('Are you sure you want to delete this task?');"
+						>
+							<i class="fa-solid fa-trash"></i>
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+{% endmacro %}
+
+<!-- Macro for rendering task modal -->
+{% macro render_task_modal(project, form, id_name, title, button_name) %}
+<div
+	class="modal fade"
+	id="{{ id_name }}"
+	tabindex="-1"
+	aria-labelledby="{{ id_name }}Label"
+	aria-hidden="true"
+>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="{{ id_name }}Label">{{ title }}</h5>
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="modal"
+					aria-label="Close"
+				></button>
+			</div>
+			<div class="modal-body">
+				<form id="{{ id_name }}Form" method="post">
+					{{ form.hidden_tag() }}
+					<div class="form-floating form-floating-label mb-3">
+						{{ form.title(class="form-control task-field", placeholder="Task
+						Title", id="taskTitle") }}
+						<label for="title" class="col-form-label">Task's Title</label>
+						{% if form.title.errors %}
+						<div class="invalid-feedback" style="display: block">
+							{{ form.title.errors[0] }}
+						</div>
+						{% endif %}
+					</div>
+					<div class="form-floating form-floating-label mb-3">
+						{{ form.description( class="form-control task-field",
+						placeholder="Task's_Description", id="taskDescription") }}
+						<label for="description" class="col-form-label"
+							>Tasks's Description</label
+						>
+						{% if form.description.errors %}
+						<div class="invalid-feedback" style="display: block">
+							{{ form.description.errors[0] }}
+						</div>
+						{% endif %}
+					</div>
+					<div class="form-floating form-floating-label mb-3">
+						{{ form.status(class="form-select task-field", id="taskStatus") }}
+						<label for="status" class="col-form-label">Tasks's Status</label>
+					</div>
+					<div class="form-floating form-floating-label mb-3">
+						{{ form.priority(class="form-select task-field", id="taskPriority")
+						}}
+						<label for="priority" class="col-form-label"
+							>Tasks's Priority</label
+						>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					Close
+				</button>
+				<button type="submit" class="btn btn-primary submit-form">
+					{{ button_name }}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endmacro %}

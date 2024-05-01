@@ -244,11 +244,45 @@ def delete_task(project_id, task_id):
         return redirect(url_for("web.project_detail", project_id=project_id))
 
 
+# Route to update all fields of a task in the database comming from form data
 @web_blueprint.route(
     "/dashboard/projects/<int:project_id>/update_task/<int:task_id>", methods=["POST"]
 )
 @login_required
 def update_task(project_id, task_id):
+    """Updates a task in the database based on form data.
+
+    Args:
+        project_id (int): The ID of the project the task belongs to.
+        task_id (int): The ID of the task to update.
+
+    Returns:
+        Response: Redirect to the project detail page.
+    """
+    try:
+        title = request.form.get("title")
+        description = request.form.get("description")
+        status = request.form.get("status")
+        priority = request.form.get("priority")
+        task = Task.query.get(task_id)
+        task.title = title
+        task.description = description
+        task.status = status
+        task.priority = priority
+        db.session.commit()
+        flash("Task updated successfully.", category="success")
+        return redirect(url_for("web.project_detail", project_id=project_id))
+    except Exception as e:
+        db.session.rollback()
+        flash(f"An error occurred while updating the task: {str(e)}", category="danger")
+        return redirect(url_for("web.project_detail", project_id=project_id))
+
+
+@web_blueprint.route(
+    "/dashboard/projects/<int:project_id>/update_task/<int:task_id>", methods=["POST"]
+)
+@login_required
+def update_task_status(project_id, task_id):
     """Updates the status of a task in the database based on JSON input.
 
     Args:
@@ -265,13 +299,21 @@ def update_task(project_id, task_id):
             return jsonify({'success': False, 'message': 'Task not found'}), 404
 
         new_status = data.get('status')
-        if new_status in TaskStatus.__members__:  # Check if the provided status is a valid enum member
+        if (
+            new_status in TaskStatus.__members__
+        ):  # Check if the provided status is a valid enum member
             task.status = TaskStatus[new_status]  # Convert string to Enum
             db.session.commit()
-            return jsonify({'success': True, 'message': 'Task updated successfully'}), 200
+            return (
+                jsonify({'success': True, 'message': 'Task updated successfully'}),
+                200,
+            )
         else:
             return jsonify({'success': False, 'message': 'Invalid status value'}), 400
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}), 500
+        return (
+            jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}),
+            500,
+        )
