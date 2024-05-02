@@ -165,7 +165,9 @@ def update_project(project_id):
         return redirect(url_for("web.projects"))
     except Exception as e:
         db.session.rollback()
-        flash(f"An error occurred while updating the project: {str(e)}", category="danger")
+        flash(
+            f"An error occurred while updating the project: {str(e)}", category="danger"
+        )
         return redirect(url_for("web.projects"))
 
 
@@ -272,7 +274,7 @@ def delete_task(project_id, task_id):
 
 # Route to update all fields of a task in the database comming from form data
 @web_blueprint.route(
-    "/dashboard/projects/<int:project_id>/update_task/<int:task_id>", methods=["POST"]
+    "/dashboard/projects/<int:project_id>/update_full_task/<int:task_id>", methods=["POST"]
 )
 @login_required
 def update_task(project_id, task_id):
@@ -325,21 +327,13 @@ def update_task_status(project_id, task_id):
             return jsonify({'success': False, 'message': 'Task not found'}), 404
 
         new_status = data.get('status')
-        if (
-            new_status in TaskStatus.__members__
-        ):  # Check if the provided status is a valid enum member
+        if new_status in TaskStatus.__members__:  # Check if the provided status is a valid enum member
             task.status = TaskStatus[new_status]  # Convert string to Enum
             db.session.commit()
-            return (
-                jsonify({'success': True, 'message': 'Task updated successfully'}),
-                200,
-            )
+            return jsonify({'success': True, 'message': 'Task updated successfully'}), 200
         else:
             return jsonify({'success': False, 'message': 'Invalid status value'}), 400
 
     except Exception as e:
         db.session.rollback()
-        return (
-            jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}),
-            500,
-        )
+        return jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}), 500

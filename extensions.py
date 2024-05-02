@@ -1,4 +1,3 @@
-import os
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap5
 from flask_migrate import Migrate
@@ -15,6 +14,7 @@ load_dotenv(dotenv_path=ENV_PATH)
 login_manager = LoginManager()
 bootstrap = Bootstrap5()
 migrate = Migrate()
+csrf = CSRFProtect()
 
 
 def init_app(app):
@@ -28,4 +28,4 @@ def init_app(app):
 
     bootstrap.init_app(app)
 
-    CSRFProtect(app)
+    csrf.init_app(app)

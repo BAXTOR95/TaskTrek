@@ -12,6 +12,7 @@
 		{% block meta %}
 		<meta name="description" content="TaskTrek" />
 		<meta name="author" content="Brian Arriaga" />
+		<meta name="csrf-token" content="{{ csrf_token() }}">
 		{% endblock meta %}
 		<!-- Font Awesome icons (free version)-->
 		<script
