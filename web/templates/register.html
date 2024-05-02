@@ -96,6 +96,12 @@
 
 			<!-- Register button -->
 			<div class="d-grid gap-2">{{ form.submit(class="btn btn-primary") }}</div>
+
+			<div class="text-center mt-3">
+				<p>
+					Already have an account? <a href="{{ url_for('login') }}">Login</a>
+				</p>
+			</div>
 		</form>
 	</div>
 </section>
