@@ -6,6 +6,7 @@
 			{% block title %}{% endblock %} - TaskTrek - Manage Your Projects with
 			Ease
 		</title>
+		<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}" />
 		<meta charset="utf-8" />
 		<meta
 			name="viewport"
@@ -52,7 +53,7 @@
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="{{ url_for('web.landing') }}"
-					><i class="fa-solid fa-check-double"></i> TaskTrek</a
+					><img src="{{ url_for('static', filename='images/logo.ico') }}" alt="TaskTrek" /> TaskTrek</a
 				>
 				<button
 					class="navbar-toggler"

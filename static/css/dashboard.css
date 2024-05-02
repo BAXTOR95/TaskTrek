@@ -314,26 +314,6 @@ a[data-toggle='collapse'] {
 	height: 50px;
 	border-radius: 50%;
 }
-.project-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: 1rem;
-}
-.project-card {
-	background-color: #fff;
-	padding: 1rem;
-	border: 1px solid #e3e3e3;
-	border-radius: 0.5rem;
-	position: relative;
-	cursor: pointer;
-}
-.project-card button.delete-btn {
-	position: absolute;
-	top: 0.5rem;
-	right: 0.5rem;
-	border: none;
-	background: none;
-}
 .form-control:focus {
 	box-shadow: none;
 }

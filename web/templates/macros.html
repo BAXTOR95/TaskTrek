@@ -119,3 +119,63 @@
 	</div>
 </div>
 {% endmacro %}
+
+<!-- Macro for rendering project form modal -->
+{% macro render_project_modal(form, id_name, title, button_name) %}
+<div
+	class="modal fade"
+	id="{{ id_name }}"
+	tabindex="-1"
+	aria-labelledby="{{ id_name }}Label"
+	aria-hidden="true"
+>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="{{ id_name }}Label">{{ title }}</h5>
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="modal"
+					aria-label="Close"
+				></button>
+			</div>
+			<div class="modal-body">
+				<form id="{{ id_name }}Form" method="post">
+					{{ form.hidden_tag() }}
+					<div class="form-floating form-floating-label mb-3">
+						{{ form.title(class="form-control project-field", placeholder="Project
+						Title", id="projectTitle") }}
+						<label for="title" class="col-form-label">Project's Title</label>
+						{% if form.title.errors %}
+						<div class="invalid-feedback" style="display: block">
+							{{ form.title.errors[0] }}
+						</div>
+						{% endif %}
+					</div>
+					<div class="form-floating form-floating-label mb-3">
+						{{ form.description( class="form-control project-field",
+						placeholder="Project's_Description", id="projectDescription") }}
+						<label for="description" class="col-form-label"
+							>Project's Description</label
+						>
+						{% if form.description.errors %}
+						<div class="invalid-feedback" style="display: block">
+							{{ form.description.errors[0] }}
+						</div>
+						{% endif %}
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					Close
+				</button>
+				<button type="submit" class="btn btn-primary submit-form">
+					{{ button_name }}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endmacro %}

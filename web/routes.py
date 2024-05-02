@@ -143,6 +143,32 @@ def add_project():
         return redirect(url_for("web.projects"))
 
 
+@web_blueprint.route("/dashboard/projects/update/<int:project_id>", methods=["POST"])
+@login_required
+def update_project(project_id):
+    """Updates a project in the database based on form data.
+
+    Args:
+        project_id (int): The ID of the project to update.
+
+    Returns:
+        Response: Redirect to the projects page.
+    """
+    try:
+        title = request.form.get("title")
+        description = request.form.get("description")
+        project = Project.query.get(project_id)
+        project.title = title
+        project.description = description
+        db.session.commit()
+        flash("Project updated successfully.", category="success")
+        return redirect(url_for("web.projects"))
+    except Exception as e:
+        db.session.rollback()
+        flash(f"An error occurred while updating the project: {str(e)}", category="danger")
+        return redirect(url_for("web.projects"))
+
+
 @web_blueprint.route("/dashboard/projects/delete/<int:project_id>", methods=["POST"])
 @login_required
 def delete_project(project_id):

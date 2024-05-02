@@ -97,6 +97,41 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	});
 
+	// Set form action for addProjectModal
+	const addProjectModal = document.getElementById('addProjectModal');
+	if (addProjectModal) {
+		addProjectModal.addEventListener('show.bs.modal', function (event) {
+			const button = event.relatedTarget; // Button that triggered the modal
+			const url = button.getAttribute('data-bs-add-url');
+
+			const form = addProjectModal.querySelector('form');
+			form.action = url; // Update form action
+		});
+	}
+
+	// Add event listeners for project edit buttons
+	const editProjectModal = document.getElementById('editProjectModal');
+	if (editProjectModal) {
+		editProjectModal.addEventListener('show.bs.modal', function (event) {
+			const button = event.relatedTarget; // Button that triggered the modal
+			const url = button.getAttribute('data-bs-update-url');
+			const projectTitle = button.getAttribute('data-bs-project-title');
+			const projectDescription = button.getAttribute(
+				'data-bs-project-description',
+			);
+
+			const modalTitle = editProjectModal.querySelector('.modal-title');
+			const form = editProjectModal.querySelector('form');
+
+			modalTitle.textContent = 'Edit Project: ' + projectTitle; // Update modal title
+			form.action = url; // Update form action
+
+			// Populate form fields
+			form.querySelector('#projectTitle').value = projectTitle;
+			form.querySelector('#projectDescription').value = projectDescription;
+		});
+	}
+
 	// Add event listeners for task edit buttons
 	const editTaskModal = document.getElementById('editTaskModal');
 	if (editTaskModal) {
