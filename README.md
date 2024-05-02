@@ -76,7 +76,7 @@ You'll need to have the following installed to run the application locally:
 
     ```plaintext
     FLASK_APP=run.py
-    CSRF_KEY=your_secret_key
+    SECRET_KEY=your_secret_key
     SQLALCHEMY_DATABASE_URI=sqlite:///data.db
     PROD=False
     ```
