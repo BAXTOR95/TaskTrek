@@ -78,6 +78,7 @@ You'll need to have the following installed to run the application locally:
     FLASK_APP=run.py
     SECRET_KEY=your_secret_key
     SQLALCHEMY_DATABASE_URI=sqlite:///data.db
+    UNSPLASH_ACCESS_KEY=your_secret_unsplash_api_key
     PROD=False
     ```
 

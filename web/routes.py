@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from flask_login import login_user, login_required, logout_user, current_user
 from datetime import datetime, UTC
 from web.utils.gravatar import gravatar_url
+from web.utils.unsplash import fetch_random_image
 from models.task import TaskStatus
 
 
@@ -26,7 +27,8 @@ def landing():
     if current_user.is_authenticated:
         return redirect(url_for("web.projects"))
     else:
-        return render_template("landing.html")
+        hero_image = fetch_random_image("sticky-note")
+        return render_template("landing.html", background_image=hero_image)
 
 
 @web_blueprint.route("/login", methods=["GET", "POST"])
@@ -52,7 +54,8 @@ def login():
             return redirect(url_for("web.projects"))
         else:
             flash("Invalid email or password", "danger")
-    return render_template("login.html", form=form)
+    form_image = fetch_random_image('lock')
+    return render_template("login.html", form=form, background_image=form_image)
 
 
 @web_blueprint.route("/register", methods=["GET", "POST"])
@@ -93,7 +96,8 @@ def register():
             db.session.rollback()
             flash("That email already exists, please login.", category="error")
             return redirect(url_for("web.login"))
-    return render_template("register.html", form=form)
+    form_image = fetch_random_image('lock')
+    return render_template("register.html", form=form, background_image=form_image)
 
 
 @web_blueprint.route('/logout')
@@ -274,7 +278,8 @@ def delete_task(project_id, task_id):
 
 # Route to update all fields of a task in the database comming from form data
 @web_blueprint.route(
-    "/dashboard/projects/<int:project_id>/update_full_task/<int:task_id>", methods=["POST"]
+    "/dashboard/projects/<int:project_id>/update_full_task/<int:task_id>",
+    methods=["POST"],
 )
 @login_required
 def update_task(project_id, task_id):
@@ -327,13 +332,21 @@ def update_task_status(project_id, task_id):
             return jsonify({'success': False, 'message': 'Task not found'}), 404
 
         new_status = data.get('status')
-        if new_status in TaskStatus.__members__:  # Check if the provided status is a valid enum member
+        if (
+            new_status in TaskStatus.__members__
+        ):  # Check if the provided status is a valid enum member
             task.status = TaskStatus[new_status]  # Convert string to Enum
             db.session.commit()
-            return jsonify({'success': True, 'message': 'Task updated successfully'}), 200
+            return (
+                jsonify({'success': True, 'message': 'Task updated successfully'}),
+                200,
+            )
         else:
             return jsonify({'success': False, 'message': 'Invalid status value'}), 400
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}), 500
+        return (
+            jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}),
+            500,
+        )

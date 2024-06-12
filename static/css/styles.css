@@ -27,8 +27,6 @@ body {
 	height: calc(
 		100vh - 56px - 48px
 	); /* Height of viewport minus navbar and footer */
-	background: url('https://source.unsplash.com/1600x900/?sticky-note') no-repeat
-		center center;
 	background-size: cover;
 	display: flex;
 	align-items: center; /* Center content vertically */
@@ -42,10 +40,6 @@ body {
 	justify-content: center;
 	align-items: center;
 	height: 100%;
-}
-.full-form-wrapper {
-	background: url('https://source.unsplash.com/1600x900/?lock') no-repeat center
-		center;
 }
 .form-control:focus {
 	box-shadow: none;
